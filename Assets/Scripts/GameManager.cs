@@ -6,7 +6,16 @@ public class GameManager : MonoBehaviour
 {
     public int currHole = 0;
     public List<Transform> startPositions;
+    public float minDist;
+
+    public GameObject player;
     public Rigidbody ballRB;
+    public GameObject scoreboard;
+    public GameObject waypoint;
+    public GameObject currHoleObj;
+    public HoleRefs currHoleRefs;
+
+    public InputActionProperty resetButton;
 
     public int currHits;
     private List<int> scores = new List<int>();
@@ -18,7 +27,8 @@ public class GameManager : MonoBehaviour
         ballRB.velocity = Vector3.zero;
         ballRB.angularVelocity = Vector3.zero;
 
-        // Get hole start positions
+        currHoleObj = GameObject.Find("Hole0" + (currHole + 1));
+        currHoleRefs = currHoleObj.GetComponent<HoleRefs>();
 
     }
 
@@ -29,6 +39,27 @@ public class GameManager : MonoBehaviour
         {
             nextHole();
         }
+
+        if (resetButton.action.WasPressedThisFrame())
+        {
+            reset();
+        }
+
+        // Update waypoint position
+        waypoint.transform.position = currHoleRefs.holeTrigger.transform.position + new Vector3(0, 1f, 0);
+        float dist = Vector3.Distance(waypoint.transform.position, player.transform.position);
+        if (dist > minDist)
+        {
+            waypoint.SetActive(true);
+        }
+        else
+        {
+            waypoint.SetActive(false);
+        }
+
+        // Reset ball position
+
+
     }
 
     public void nextHole()
@@ -43,6 +74,9 @@ public class GameManager : MonoBehaviour
             ballRB.transform.position = startPositions[currHole].position;
             ballRB.velocity = Vector3.zero;
             ballRB.angularVelocity = Vector3.zero;
+
+            currHoleObj = GameObject.Find("Hole0" + (currHole + 1));
+            currHoleRefs = currHoleObj.GetComponent<HoleRefs>();
         }
 
         scores.Add(currHits);
@@ -52,9 +86,23 @@ public class GameManager : MonoBehaviour
 
     public void showScore()
     {
-        for (int i = 0; i < scores.Count; i++)
+        if (currHole <= 9)
         {
-            Debug.Log("Hole " + (i + 1) + ": " + scores[i]);
+            scoreboard.transform.GetChild(currHole).GetComponent<TMPro.TextMeshPro>().text += scores[currHole - 1].ToString();
+            int total = 0;
+            for (int i = 0; i < scores.Count; i++)
+            {
+                total += scores[i];
+            }
+            scoreboard.transform.GetChild(10).GetComponent<TMPro.TextMeshPro>().text = "Total    - " + total.ToString();
         }
+
+    }
+
+    public void reset()
+    {
+        ballRB.transform.position = startPositions[currHole].position;
+        ballRB.velocity = Vector3.zero;
+        ballRB.angularVelocity = Vector3.zero;
     }
 }
