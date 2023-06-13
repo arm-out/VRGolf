@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    private int currHole = 0;
+    public int currHole = 0;
     public List<Transform> startPositions;
     public Rigidbody ballRB;
 
@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
         ballRB.transform.position = startPositions[currHole].position;
         ballRB.velocity = Vector3.zero;
         ballRB.angularVelocity = Vector3.zero;
+
+        // Get hole start positions
+
     }
 
     // Update is called once per frame
