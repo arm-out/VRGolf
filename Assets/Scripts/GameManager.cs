@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
     public HoleRefs currHoleRefs;
 
     public InputActionProperty resetButton;
+    public InputActionProperty quitButton;
+    public InputActionProperty nextHoleButton;
 
     public int currHits;
     private List<int> scores = new List<int>();
@@ -35,7 +38,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame || nextHoleButton.action.WasPressedThisFrame())
         {
             nextHole();
         }
@@ -43,6 +46,12 @@ public class GameManager : MonoBehaviour
         if (resetButton.action.WasPressedThisFrame())
         {
             reset();
+            currHits += 1;
+        }
+
+        if (quitButton.action.WasPressedThisFrame())
+        {
+            SceneManager.LoadScene(0);
         }
 
         // Update waypoint position
